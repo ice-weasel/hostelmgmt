@@ -25,6 +25,7 @@ const getDetails = async (res: NextApiResponse) => {
 };
 export default  function Home() {
 
+
   
   const [formData, setFormData] = useState<StudentDetails>({
     firstname: "",
