@@ -1,4 +1,4 @@
-"use client";
+"use client"
 
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
