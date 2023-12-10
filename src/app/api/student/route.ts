@@ -15,6 +15,11 @@ export async function POST(req: request)
 {
         const {firstname} = await req.json();
 
+        if (!firstname) {
+            return NextResponse.json({ msg: 'Invalid or missing firstname in the request.' });
+        }
+
+
         console.log("First Name: ",firstname);
 
         try{

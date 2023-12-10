@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
@@ -23,15 +23,10 @@ const getDetails = async (res: NextApiResponse) => {
     console.error("Error fetching student:", error);
   }
 };
-export default  function Create() {
-
-
-  
+export default function Create() {
   const [formData, setFormData] = useState<StudentDetails>({
     firstname: "",
   });
-
- 
 
   const [error, setError] = useState([""]);
 
