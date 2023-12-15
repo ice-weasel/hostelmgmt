@@ -1,23 +1,35 @@
 "use client";
 
+import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import app from "@/app/firebase";
 import Link from "next/link";
 import { useState } from "react";
 import "tailwindcss/tailwind.css";
+import { doc, getFirestore, setDoc } from "firebase/firestore";
 
+// structure of firebase storage
 interface AdminLogin {
+  name: string;
   email: string;
   password: string;
+  roles:boolean;
 }
 
 export default function SignupForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [formdata, setFormData] = useState<AdminLogin>({
+  //const declarations for use in forms
+  
+  
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+
+  const [formData, setFormData] = useState<AdminLogin>({
+    name: "",
     email: "",
     password: "",
+    roles: true,
   });
   const [error, setError] = useState("user exists");
 
+  // text change handler
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -26,38 +38,42 @@ export default function SignupForm() {
       ...prevData,
       [name]: value,
     }));
+    updateButtonStatus();
   };
 
+  const updateButtonStatus = () => {
+    const { name, email, password } = formData;
+    setIsButtonDisabled(!email || !password);
+  };
+
+  // signup logic
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (!email || !password) {
-        setError("All Fields are necessary");
-        return;
-    }
-
+    const auth = getAuth(app);
+    const { name, email, password } = formData;
     try {
-        const res = await fetch('api/register', {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                email, password
-            }),
-        });
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      const admin = userCredential.user;
 
-        if (res.ok) {
-           
-            const form = e.target as HTMLFormElement;
-            form.reset();
-        } else {
-            console.log("User registration failed");
-        }
-    } catch (error) {
-        console.error("Error during registration:", error);
+      const db = getFirestore(app);
+      const adminDocRef = doc(db, "admin", admin.uid);
+      const adminData = {
+        name,
+      };
+
+      await setDoc(adminDocRef, adminData);
+
+      console.log("User created and stored");
+      window.location.href = "/createstudent";
+    } catch (error: any) {
+      console.log("error creating user", error.code, error.message);
     }
-};
+  };
 
   return (
     <section className="bg-gray-50 dark:bg-gray-900">
@@ -78,7 +94,29 @@ export default function SignupForm() {
             <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
               Create and account
             </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
+            <form
+              className="space-y-4 md:space-y-6"
+              onSubmit={handleSubmit}
+              action="#"
+            >
+              <div>
+                <label
+                  htmlFor="name"
+                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                >
+                  Your Name
+                </label>
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  value={formData.name}
+                  onChange={handleChange}
+                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                  placeholder="name@company.com"
+                  required
+                ></input>
+              </div>
               <div>
                 <label
                   htmlFor="email"
@@ -88,9 +126,10 @@ export default function SignupForm() {
                 </label>
                 <input
                   onChange={handleChange}
-                  type="email"
+                  type="text"
                   name="email"
                   id="email"
+                  value={formData.email}
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
                   placeholder="name@company.com"
                   required
@@ -105,8 +144,9 @@ export default function SignupForm() {
                 </label>
                 <input
                   onChange={handleChange}
-                  type="password"
+                  type="text"
                   name="password"
+                  value={formData.password}
                   id="password"
                   placeholder="••••••••"
                   className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
@@ -121,7 +161,7 @@ export default function SignupForm() {
                   Confirm password
                 </label>
                 <input
-                  type="confirm-password"
+                  type="text"
                   name="confirm-password"
                   id="confirm-password"
                   placeholder="••••••••"

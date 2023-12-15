@@ -3,29 +3,21 @@
 import { NextApiResponse } from "next";
 import { NextResponse } from "next/server";
 import { useState } from "react";
+import "tailwindcss/tailwind.css";
 
 interface StudentDetails {
-  firstname: string;
+  name: string;
+  email: string;
+  password: string;
+  roomno: string;
 }
 
-const getDetails = async (res: NextApiResponse) => {
-  try {
-    const response = await fetch("/api/student", {
-      method: "GET", // Specify the HTTP method
-      cache: "no-store",
-    });
-    if (!response.ok) {
-      throw new Error("Failed to fetch student");
-    }
-    const data = await response.json();
-    console.log("Student data:", data);
-  } catch (error) {
-    console.error("Error fetching student:", error);
-  }
-};
 export default function Create() {
   const [formData, setFormData] = useState<StudentDetails>({
-    firstname: "",
+    name: "",
+    email: "",
+    password: "",
+    roomno: "",
   });
 
   const [error, setError] = useState([""]);
@@ -43,92 +35,87 @@ export default function Create() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const res = await fetch("api/student", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json",
-        },
-        body: JSON.stringify({
-          firstname: formData.firstname,
-        }),
-      });
-      const { msg } = await res.json();
-      setError(msg);
-    } catch (error) {
-      console.error("Error", error);
-    }
+    } catch (error) {}
   };
   return (
     <div className="bg-white">
-      <div className="flex flex-col bg-rounded mt-7">
+      <div className="flex flex-col bg-rounded p-7 mt-7">
         <p className="text-3xl text-center">Create Student</p>
+
         <div className="flex flex-col mt-7">
           <form
             method="POST"
             onSubmit={handleSubmit}
             className="flex flex-rows justify-evenly"
           >
-            <div className="w-72">
-              <div className="relative w-full min-w-[200px] h-10">
-                <input
-                  className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
-                  placeholder=""
-                  name="firstname"
-                  value={formData.firstname}
-                  type="text"
-                  onChange={handleChange}
-                  id="firstname"
-                />
-                <label
-                  className="flex w-full h-full select-none pointer-events-none 
-                    absolute left-0 font-normal !overflow-visible 
-                    truncate peer-placeholder-shown:text-blue-gray-500 
-                    leading-tight peer-focus:leading-tight 
-                    peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 
-                    transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] ]
-                    before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px]
-                    before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t
-                    peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none 
-                    before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow 
-                    after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 
-                    peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t 
-                    peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none 
-                    after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] 
-                    text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 
-                    after:border-blue-gray-200 peer-focus:after:!border-gray-900"
-                >
-                  First Name
-                </label>
-              </div>
+            <div className="relative">
+              <input
+                type="text"
+                id="name"
+                onChange={handleChange}
+                value={formData.name}
+                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-2 border-blue-500 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              />
+              <label
+                htmlFor="floating_outlined"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+              >
+                Name
+              </label>
             </div>
 
-            <div className="w-72">
-              <div className="relative w-full min-w-[200px] h-10">
-                <input
-                  className="peer w-full h-full bg-transparent text-blue-gray-700 font-sans font-normal outline outline-0 focus:outline-0 disabled:bg-blue-gray-50 disabled:border-0 transition-all placeholder-shown:border placeholder-shown:border-blue-gray-200 placeholder-shown:border-t-blue-gray-200 border focus:border-2 border-t-transparent focus:border-t-transparent text-sm px-3 py-2.5 rounded-[7px] border-blue-gray-200 focus:border-gray-900"
-                  placeholder=" "
-                />
-                <label
-                  className="flex w-full h-full select-none pointer-events-none 
-                    absolute left-0 font-normal !overflow-visible 
-                    truncate peer-placeholder-shown:text-blue-gray-500 
-                    leading-tight peer-focus:leading-tight 
-                    peer-disabled:text-transparent peer-disabled:peer-placeholder-shown:text-blue-gray-500 
-                    transition-all -top-1.5 peer-placeholder-shown:text-sm text-[11px] peer-focus:text-[11px] ]
-                    before:content[' '] before:block before:box-border before:w-2.5 before:h-1.5 before:mt-[6.5px]
-                    before:mr-1 peer-placeholder-shown:before:border-transparent before:rounded-tl-md before:border-t
-                    peer-focus:before:border-t-2 before:border-l peer-focus:before:border-l-2 before:pointer-events-none 
-                    before:transition-all peer-disabled:before:border-transparent after:content[' '] after:block after:flex-grow 
-                    after:box-border after:w-2.5 after:h-1.5 after:mt-[6.5px] after:ml-1 
-                    peer-placeholder-shown:after:border-transparent after:rounded-tr-md after:border-t 
-                    peer-focus:after:border-t-2 after:border-r peer-focus:after:border-r-2 after:pointer-events-none 
-                    after:transition-all peer-disabled:after:border-transparent peer-placeholder-shown:leading-[3.75] 
-                    text-gray-500 peer-focus:text-gray-900 before:border-blue-gray-200 peer-focus:before:!border-gray-900 
-                    after:border-blue-gray-200 peer-focus:after:!border-gray-900"
-                >
-                  Last Name
-                </label>
-              </div>
+            <div className="relative">
+              <input
+                type="text"
+                id="email"
+                onChange={handleChange}
+                value={formData.email}
+                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-2 border-blue-500 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              />
+              <label
+                htmlFor="floating_outlined"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+              >
+                Email
+              </label>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                id="password"
+                name="password"
+                onChange={handleChange}
+                value={formData.password}
+                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-2 border-blue-500 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              />
+              <label
+                htmlFor="floating_outlined"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+              >
+                Password
+              </label>
+            </div>
+
+            <div className="relative">
+              <input
+                type="text"
+                id="roomno"
+                name="roomno"
+                onChange={handleChange}
+                value={formData.roomno}
+                className="block px-2.5 pb-2.5 pt-4 w-full text-sm text-gray-900 bg-white rounded-lg border-2 border-blue-500 dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                placeholder=" "
+              />
+              <label
+                htmlFor="floating_outlined"
+                className="absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-4 scale-75 top-2 z-10 origin-[0] bg-white px-2 peer-focus:px-2 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 peer-focus:scale-75 peer-focus:-translate-y-4 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto start-1"
+              >
+                Room Number
+              </label>
             </div>
             <button className="text-black" type="submit">
               Submit
@@ -136,8 +123,6 @@ export default function Create() {
           </form>
           {error && <p>{error}</p>}
         </div>
-
-        <div className="flex justify-evenly mt-5 items-center flex-rows p-4 bg-slate-300 hover:shadow-lg z-auto shadow-sm rounded-md"></div>
       </div>
     </div>
   );
