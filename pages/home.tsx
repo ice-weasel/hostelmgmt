@@ -1,8 +1,16 @@
 import "tailwindcss/tailwind.css";
 import "tailwind.config.ts";
 import Image from "next/image";
+import { Accounts } from "@/app/api/admin/route";
 
-export default function Home() {
+export default async function Home() {
+  
+  let students: Accounts[] = [];
+  const response = await fetch('/api/admin');
+  if(response.ok) {
+    const accountsJson = await response.json();
+    if(accountsJson && accountsJson.length > 0) students = accountsJson
+  }
   return (
     <div className="flex flex-col  ">
       <nav className=" justify-between items-center  mr-12">
@@ -33,6 +41,7 @@ export default function Home() {
 
       <div className="rounded-md mt-7  min-h-screen bg-blue-300 shadow-blue-300">
         <p className="text-3xl text-center">Student Details</p>
+          {students.map()}
       </div>
     </div>
   );
